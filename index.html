@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KMeans Customer Segmentation</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛍️ KMeans Customer Segmentation</h1>
+            <p class="subtitle">Unsupervised Machine Learning for Business Intelligence and Customer Analysis</p>
+        </header>
+
+        <div class="info-section">
+            <div class="info-card">
+                <h3>📊 Dataset Information</h3>
+                <p><strong>Total Customers:</strong> <span id="totalCustomers">--</span></p>
+                <p><strong>Features:</strong> <span id="totalFeatures">5</span></p>
+                <p><strong>Key Attributes:</strong> Age, Income, Spending Score</p>
+                <p><strong>Status:</strong> <span id="dataStatus" class="status-badge">Not Loaded</span></p>
+            </div>
+
+            <div class="info-card">
+                <h3>🤖 Clustering Model</h3>
+                <p><strong>Algorithm:</strong> KMeans Clustering</p>
+                <p><strong>Number of Clusters (K):</strong> <span id="numClusters">--</span></p>
+                <p><strong>Optimal K:</strong> <span id="optimalK">--</span></p>
+                <p><strong>Inertia:</strong> <span id="inertia">--</span></p>
+                <p><strong>Status:</strong> <span id="modelStatus" class="status-badge">Not Trained</span></p>
+            </div>
+
+            <div class="info-card">
+                <h3>💼 Business Insights</h3>
+                <p><strong>Segments Identified:</strong> <span id="segmentsCount">--</span></p>
+                <p><strong>Largest Segment:</strong> <span id="largestSegment">--</span></p>
+                <p><strong>High-Value Customers:</strong> <span id="highValueCount">--</span></p>
+                <p><strong>Marketing Strategy:</strong> <span id="strategyStatus">Pending Analysis</span></p>
+            </div>
+        </div>
+
+        <div class="workflow-section">
+            <h2>📋 Customer Segmentation Workflow</h2>
+            
+            <!-- Step 1: Load Dataset -->
+            <div class="workflow-step">
+                <div class="step-header" onclick="toggleStep('step1')">
+                    <span class="step-number">1</span>
+                    <h3>Load Mall Customer Dataset</h3>
+                    <span class="step-icon">▼</span>
+                </div>
+                <div id="step1" class="step-content active">
+                    <div class="upload-options">
+                        <button id="loadSampleBtn" class="btn btn-primary">📂 Load Sample Dataset</button>
+                        <input type="file" id="fileInput" accept=".csv" style="display: none;">
+                        <button id="uploadBtn" class="btn btn-secondary">📤 Upload Custom CSV</button>
+                    </div>
+                    <div id="datasetInfo" class="result-box"></div>
+                    <div id="dataPreview"></div>
+                </div>
+            </div>
+
+            <!-- Step 2: Data Preprocessing -->
+            <div class="workflow-step">
+                <div class="step-header" onclick="toggleStep('step2')">
+                    <span class="step-number">2</span>
+                    <h3>Data Preprocessing & Feature Selection</h3>
+                    <span class="step-icon">▼</span>
+                </div>
+                <div id="step2" class="step-content">
+                    <div class="feature-selection">
+                        <h4>Select Features for Clustering:</h4>
+                        <div class="checkbox-grid">
+                            <label><input type="checkbox" id="featureAge" checked> Age</label>
+                            <label><input type="checkbox" id="featureIncome" checked> Annual Income (k$)</label>
+                            <label><input type="checkbox" id="featureSpending" checked> Spending Score (1-100)</label>
+                        </div>
+                    </div>
+                    <button id="preprocessBtn" class="btn btn-primary">⚙️ Preprocess & Apply StandardScaler</button>
+                    <div id="preprocessingResults" class="result-box"></div>
+                    <div id="featureStats"></div>
+                </div>
+            </div>
+
+            <!-- Step 3: Elbow Method -->
+            <div class="workflow-step">
+                <div class="step-header" onclick="toggleStep('step3')">
+                    <span class="step-number">3</span>
+                    <h3>Find Optimal K using Elbow Method</h3>
+                    <span class="step-icon">▼</span>
+                </div>
+                <div id="step3" class="step-content">
+                    <div class="control-group">
+                        <label for="maxClusters">Maximum K to Test:</label>
+                        <select id="maxClusters">
+                            <option value="8">8</option>
+                            <option value="10" selected>10</option>
+                            <option value="12">12</option>
+                            <option value="15">15</option>
+                        </select>
+                    </div>
+                    <button id="elbowBtn" class="btn btn-primary">📉 Calculate Elbow Curve</button>
+                    <div id="elbowProgress"></div>
+                    <div class="chart-container">
+                        <canvas id="elbowChart"></canvas>
+                    </div>
+                    <div id="elbowRecommendation" class="result-box"></div>
+                </div>
+            </div>
+
+            <!-- Step 4: Train KMeans -->
+            <div class="workflow-step">
+                <div class="step-header" onclick="toggleStep('step4')">
+                    <span class="step-number">4</span>
+                    <h3>Train KMeans Model</h3>
+                    <span class="step-icon">▼</span>
+                </div>
+                <div id="step4" class="step-content">
+                    <div class="control-group">
+                        <label for="selectedK">Number of Clusters (K):</label>
+                        <input type="number" id="selectedK" value="5" min="2" max="15">
+                    </div>
+                    <button id="trainBtn" class="btn btn-primary">🎯 Train KMeans Model</button>
+                    <div id="trainingResults" class="result-box"></div>
+                    <div id="clusterSizes"></div>
+                </div>
+            </div>
+
+            <!-- Step 5: Visualize Clusters -->
+            <div class="workflow-step">
+                <div class="step-header" onclick="toggleStep('step5')">
+                    <span class="step-number">5</span>
+                    <h3>Visualize Customer Segments</h3>
+                    <span class="step-icon">▼</span>
+                </div>
+                <div id="step5" class="step-content">
+                    <div class="visualization-controls">
+                        <div class="control-group">
+                            <label for="xAxis">X-Axis:</label>
+                            <select id="xAxis">
+                                <option value="Annual Income (k$)" selected>Annual Income</option>
+                                <option value="Age">Age</option>
+                                <option value="Spending Score (1-100)">Spending Score</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label for="yAxis">Y-Axis:</label>
+                            <select id="yAxis">
+                                <option value="Spending Score (1-100)" selected>Spending Score</option>
+                                <option value="Annual Income (k$)">Annual Income</option>
+                                <option value="Age">Age</option>
+                            </select>
+                        </div>
+                        <button id="visualizeBtn" class="btn btn-primary">📊 Generate Visualization</button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="clusterScatter"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 6: Cluster Interpretation -->
+            <div class="workflow-step">
+                <div class="step-header" onclick="toggleStep('step6')">
+                    <span class="step-number">6</span>
+                    <h3>Interpret & Label Customer Segments</h3>
+                    <span class="step-icon">▼</span>
+                </div>
+                <div id="step6" class="step-content">
+                    <button id="interpretBtn" class="btn btn-primary">🔍 Analyze Segments</button>
+                    <div id="segmentAnalysis"></div>
+                </div>
+            </div>
+
+            <!-- Step 7: Export Results -->
+            <div class="workflow-step">
+                <div class="step-header" onclick="toggleStep('step7')">
+                    <span class="step-number">7</span>
+                    <h3>Export Segmented Dataset</h3>
+                    <span class="step-icon">▼</span>
+                </div>
+                <div id="step7" class="step-content">
+                    <button id="exportBtn" class="btn btn-primary" disabled>💾 Download Segmented CSV</button>
+                    <button id="exportReportBtn" class="btn btn-secondary" disabled>📄 Download Analysis Report</button>
+                    <div id="exportInfo" class="result-box"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cluster-profiles-section">
+            <h2>👥 Customer Segment Profiles</h2>
+            <div id="clusterProfiles" class="profiles-grid"></div>
+        </div>
+
+        <div class="insights-section">
+            <h2>💡 Business Insights & Recommendations</h2>
+            <div id="businessInsights"></div>
+        </div>
+
+        <div class="faq-section">
+            <h2>❓ Interview Questions & Answers</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question">1. What is clustering?</div>
+                <div class="faq-answer">
+                    Clustering is an unsupervised machine learning technique that groups similar data points together based on their features, without predefined labels. The algorithm finds patterns and structures in data by grouping items that are more similar to each other than to items in other groups.<br><br>
+                    <strong>Key characteristics:</strong><br>
+                    • Unsupervised learning (no target variable)<br>
+                    • Groups similar data points together<br>
+                    • Discovers hidden patterns in data<br>
+                    • Used for customer segmentation, anomaly detection, and data exploration<br><br>
+                    <strong>Applications:</strong> Customer segmentation, image segmentation, document clustering, anomaly detection, recommendation systems
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">2. Why does scaling matter in KMeans?</div>
+                <div class="faq-answer">
+                    KMeans uses Euclidean distance to measure similarity between data points. Features with larger scales (e.g., income in thousands) will dominate the distance calculation over features with smaller scales (e.g., spending score 1-100).<br><br>
+                    <strong>Without scaling:</strong><br>
+                    • Features with larger ranges dominate clustering decisions<br>
+                    • Income (range: 15-137k) would overshadow Spending Score (range: 1-100)<br>
+                    • Results in biased and inaccurate clusters<br><br>
+                    <strong>StandardScaler solution:</strong><br>
+                    • Transforms each feature to mean=0 and std=1<br>
+                    • All features contribute equally to distance calculations<br>
+                    • Formula: X_scaled = (X - mean) / std<br>
+                    • Ensures balanced clustering based on all features
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">3. What is inertia?</div>
+                <div class="faq-answer">
+                    Inertia (also called Within-Cluster Sum of Squares - WCSS) measures how tightly grouped the clusters are. It's the sum of squared distances between each data point and its assigned cluster centroid.<br><br>
+                    <strong>Formula:</strong><br>
+                    Inertia = Σ ||xᵢ - μⱼ||² for all points xᵢ in cluster j with centroid μⱼ<br><br>
+                    <strong>Properties:</strong><br>
+                    • Lower inertia = tighter, more compact clusters<br>
+                    • Higher inertia = loose, spread-out clusters<br>
+                    • Decreases as K (number of clusters) increases<br>
+                    • At K=n (n=number of points), inertia=0 (each point is its own cluster)<br><br>
+                    <strong>Use in Elbow Method:</strong> Plot inertia vs K to find the "elbow point" where adding more clusters doesn't significantly reduce inertia
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">4. What is the Elbow Method?</div>
+                <div class="faq-answer">
+                    The Elbow Method is a heuristic technique to determine the optimal number of clusters (K) by plotting inertia against different K values and finding the "elbow point" where the rate of decrease sharply changes.<br><br>
+                    <strong>Process:</strong><br>
+                    1. Run KMeans for K = 1, 2, 3, ..., max_K<br>
+                    2. Calculate inertia for each K<br>
+                    3. Plot K vs Inertia<br>
+                    4. Find the "elbow" - point where curve bends<br>
+                    5. Choose K at the elbow as optimal<br><br>
+                    <strong>Interpretation:</strong><br>
+                    • Before elbow: Adding clusters significantly reduces inertia<br>
+                    • At elbow: Diminishing returns begin<br>
+                    • After elbow: Minimal improvement with more clusters<br><br>
+                    <strong>Limitations:</strong> Sometimes the elbow is not clear; use domain knowledge and business requirements to validate
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">5. What are limitations of KMeans?</div>
+                <div class="faq-answer">
+                    <strong>1. Requires K in advance:</strong> Must specify number of clusters before training<br>
+                    <strong>2. Assumes spherical clusters:</strong> Struggles with non-spherical or irregular shapes<br>
+                    <strong>3. Sensitive to initialization:</strong> Different random starts can give different results (use kmeans++ initialization)<br>
+                    <strong>4. Sensitive to outliers:</strong> Extreme values can skew cluster centers<br>
+                    <strong>5. Assumes equal cluster sizes:</strong> Performs poorly with imbalanced clusters<br>
+                    <strong>6. Feature scaling required:</strong> Must normalize/standardize features<br>
+                    <strong>7. Categorical features:</strong> Only works with numerical data (need encoding)<br>
+                    <strong>8. Local optima:</strong> May converge to suboptimal solutions<br>
+                    <strong>9. Curse of dimensionality:</strong> Performance degrades with many features<br><br>
+                    <strong>Alternatives:</strong> DBSCAN (density-based), Hierarchical Clustering, Gaussian Mixture Models
+                </div>
+            </div>
+        </div>
+
+        <div class="documentation-section">
+            <h2>📚 Technical Documentation</h2>
+            
+            <div class="doc-card">
+                <h3>🎯 KMeans Algorithm</h3>
+                <p>KMeans is an iterative algorithm that partitions data into K distinct clusters. Each cluster is represented by its centroid (mean of all points in the cluster).</p>
+                <div class="algorithm-steps">
+                    <h4>Algorithm Steps:</h4>
+                    <ol>
+                        <li><strong>Initialize:</strong> Randomly select K points as initial centroids (or use KMeans++ for better initialization)</li>
+                        <li><strong>Assign:</strong> Assign each data point to the nearest centroid (using Euclidean distance)</li>
+                        <li><strong>Update:</strong> Recalculate centroids as the mean of all points assigned to each cluster</li>
+                        <li><strong>Repeat:</strong> Steps 2-3 until centroids don't change or max iterations reached</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="doc-card">
+                <h3>📊 Mall Customer Dataset</h3>
+                <p><strong>Source:</strong> Kaggle - Mall Customer Segmentation Data</p>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li><strong>CustomerID:</strong> Unique identifier (dropped for clustering)</li>
+                    <li><strong>Gender:</strong> Male or Female (can be encoded if used)</li>
+                    <li><strong>Age:</strong> Customer age in years</li>
+                    <li><strong>Annual Income (k$):</strong> Annual income in thousands of dollars</li>
+                    <li><strong>Spending Score (1-100):</strong> Score assigned by mall based on customer behavior and spending nature</li>
+                </ul>
+                <p><strong>Size:</strong> 200 customers</p>
+            </div>
+
+            <div class="doc-card">
+                <h3>💼 Business Applications</h3>
+                <ul>
+                    <li><strong>Targeted Marketing:</strong> Create personalized campaigns for each segment</li>
+                    <li><strong>Product Recommendations:</strong> Suggest products based on segment preferences</li>
+                    <li><strong>Pricing Strategy:</strong> Optimize pricing for different customer groups</li>
+                    <li><strong>Inventory Management:</strong> Stock products based on segment demands</li>
+                    <li><strong>Customer Retention:</strong> Identify at-risk segments for retention programs</li>
+                    <li><strong>Resource Allocation:</strong> Focus resources on high-value segments</li>
+                </ul>
+            </div>
+
+            <div class="doc-card">
+                <h3>📈 Distance Metrics</h3>
+                <p><strong>Euclidean Distance (used in KMeans):</strong></p>
+                <div class="formula">
+                    d(p, q) = √[(p₁-q₁)² + (p₂-q₂)² + ... + (pₙ-qₙ)²]
+                </div>
+                <p><strong>Other distance metrics:</strong></p>
+                <ul>
+                    <li>Manhattan Distance: Sum of absolute differences</li>
+                    <li>Cosine Similarity: Angle between vectors</li>
+                    <li>Mahalanobis Distance: Accounts for correlations</li>
+                </ul>
+            </div>
+        </div>
+
+        <footer>
+            <p>🛍️ KMeans Customer Segmentation | Built with HTML, CSS & JavaScript</p>
+            <p>Features: Elbow Method • StandardScaler • Cluster Visualization • Business Insights • Export CSV</p>
+        </footer>
+    </div>
+
+    <script src="./script.js"></script>
+</body>
+</html>
