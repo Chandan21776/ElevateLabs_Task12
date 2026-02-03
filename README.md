@@ -1,3 +1,33 @@
+🛍️ KMeans Customer Segmentation
+A comprehensive web-based implementation of KMeans clustering for customer segmentation and business intelligence. Built entirely with vanilla HTML, CSS and JavaScript with complete unsupervised machine learning workflow.
+📋 Project Overview
+This project demonstrates the complete customer segmentation workflow using KMeans clustering, including data preprocessing, elbow method for optimal K selection, StandardScaler normalization, cluster visualization and business insights generation for marketing strategies.
+✨ Features
+🎯 Complete ML Pipeline
+
+Dataset Loading: Mall customer dataset (200 customers, 5 features)
+Feature Selection: Choose which features to use for clustering
+StandardScaler: Feature normalization for balanced clustering
+Elbow Method: Automatic optimal K detection
+KMeans++: Smart centroid initialization
+Cluster Visualization: 2D scatter plots with customizable axes
+Segment Interpretation: Business-relevant cluster labeling
+Export Capabilities: Segmented CSV and analysis reports
+
+🔧 Technical Implementation
+KMeans Algorithm: Complete from-scratch implementation
+KMeans++ Initialization: Better starting centroids
+Elbow Method: Automatic elbow point detection
+StandardScaler: Mean normalization and variance scaling
+Inertia Calculation: Within-Cluster Sum of Squares (WCSS)
+Distance Metrics: Euclidean distance
+Convergence Detection: Tolerance-based stopping
+
+📊 Visualizations
+Elbow Curve: K vs Inertia with highlighted optimal point
+Cluster Scatter: 2D visualization with centroids
+Distribution Charts: Cluster size breakdown
+Feature Statistics: Before-scaling statistics table
 <img width="1875" height="935" alt="Screenshot 2026-02-03 144157" src="https://github.com/user-attachments/assets/0d2d888b-ea89-4225-8d6a-37d3449254c1" />
 <img width="1323" height="911" alt="Screenshot 2026-02-03 144237" src="https://github.com/user-attachments/assets/1c0dee7f-457b-4ca1-a340-8cd640bcd44f" />
 <img width="1393" height="938" alt="Screenshot 2026-02-03 144254" src="https://github.com/user-attachments/assets/7dc15b24-86c6-4882-88fd-b728d2bdcad3" />
